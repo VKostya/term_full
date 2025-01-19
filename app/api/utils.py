@@ -24,3 +24,10 @@ def read_all_links(db):
     except:
         raise HTTPException(status_code=502, detail="DB error")    
     return term_links
+
+def get_related_terms(id, db):
+    try:
+        terms = db.query(Term).join(TermLink, Term.id == TermLink.child_id).filter(TermLink.parent_id == id).all()
+    except:
+        raise HTTPException(status_code=502, detail="DB error")    
+    return terms

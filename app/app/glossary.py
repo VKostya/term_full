@@ -19,7 +19,7 @@ def home(request: Request, db: Session = Depends(get_db)):
         }
     )
 @glossary_router.get("/terms/{id}/")
-def home(id: int, request: Request, db: Session = Depends(get_db)):
+def term_info(id: int, request: Request, db: Session = Depends(get_db)):
     term = read_one_term(id=id, db=db)  
     related_terms = get_related_terms(id=id, db=db)
     rel_flag = len(related_terms)
@@ -31,5 +31,14 @@ def home(id: int, request: Request, db: Session = Depends(get_db)):
             "term": term,
             "rel_flag": rel_flag,
             "related": related_terms
+        }
+    )
+
+@glossary_router.get("/")
+def home_page(request: Request):
+    return templates.TemplateResponse(
+        "home_page.html",
+        {
+            "request": request
         }
     )
