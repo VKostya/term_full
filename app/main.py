@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from sqlalchemy.orm import Session
 from db.db_engine import engine
+from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from api.terms import term_router
 from api.links import link_router
@@ -8,9 +9,6 @@ from app.glossary import glossary_router
 from db.models import Base
 from config import config
 import uvicorn 
-
-
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.include_router(term_router, prefix="/api")
