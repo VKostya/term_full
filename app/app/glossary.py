@@ -1,6 +1,5 @@
-from db.models import Term
 from db.utils import get_db
-from fastapi import HTTPException, Depends, APIRouter, Request
+from fastapi import Depends, APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from api.utils import read_all_terms, read_one_term, get_related_terms
