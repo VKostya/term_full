@@ -5,37 +5,46 @@ from models.term_models import TermCreate, Terms
 from fastapi import HTTPException, Depends, APIRouter
 
 
-router = APIRouter()
+term_router = APIRouter()
 
 
-@router.post("/terms/", response_model=Terms)
+@term_router.post("/terms/", response_model=Terms)
 def create_term(term: TermCreate, db: Session = Depends(get_db)):
     db_term = Term(**term.dict())
-    db.add(db_term)
-    db.commit()
-    db.refresh(db_term)
+    try:
+        db.add(db_term)
+        db.commit()
+        db.refresh(db_term)
+    except:
+        raise HTTPException(status_code=502, detail="DB error")    
     return db_term
 
 
-@router.get("/terms/", response_model=list[Terms])
-def read_terms(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    terms = db.query(Term).all()
-    if limit <= skip:
-        return terms
-    return terms[skip:limit]
+@term_router.get("/terms/", response_model=list[Terms])
+def read_terms(db: Session = Depends(get_db)):
+    try:
+        terms = db.query(Term).all()
+    except:
+        raise HTTPException(status_code=502, detail="DB error")    
+    return terms
 
 
-@router.get("/terms/{keyword}", response_model=Terms)
-def read_term(keyword: str, db: Session = Depends(get_db)):
-    term = db.query(Term).filter(Term.keyword == keyword).first()
+@term_router.get("/terms/{id}", response_model=Terms)
+def read_term(id: int, db: Session = Depends(get_db)):
+    try:
+        term = db.query(Term).filter(Term.id == id).first()
+    except:
+        raise HTTPException(status_code=502, detail="DB error")    
     if term is None:
         raise HTTPException(status_code=404, detail="Term not found")
     return term
 
-
-@router.put("/terms/{keyword}", response_model=Terms)
-def update_term(keyword: str, term: TermCreate, db: Session = Depends(get_db)):
-    db_term = db.query(Term).filter(Term.keyword == keyword).first()
+@term_router.put("/terms/{id}", response_model=Terms)
+def update_term(id: int, term: TermCreate, db: Session = Depends(get_db)):
+    try:
+        db_term = db.query(Term).filter(Term.id == id).first()
+    except:
+        raise HTTPException(status_code=502, detail="DB error")    
     if db_term is None:
         raise HTTPException(status_code=404, detail="Term not found")
     for key, value in term.dict().items():
@@ -43,10 +52,12 @@ def update_term(keyword: str, term: TermCreate, db: Session = Depends(get_db)):
     db.commit()
     return db_term
 
-
-@router.delete("/terms/{keyword}")
-def delete_term(keyword: str, db: Session = Depends(get_db)):
-    db_term = db.query(Term).filter(Term.keyword == keyword).first()
+@term_router.delete("/terms/{id}")
+def delete_term(id: int, db: Session = Depends(get_db)):
+    try:
+        db_term = db.query(Term).filter(Term.id == id).first()
+    except:
+        raise HTTPException(status_code=502, detail="DB error")    
     if db_term is None:
         raise HTTPException(status_code=404, detail="Term not found")
     db.delete(db_term)

@@ -4,6 +4,7 @@ from pydantic import BaseModel
 class TermBase(BaseModel):
     keyword: str
     description: str
+    source: str
 
 
 class TermCreate(TermBase):
