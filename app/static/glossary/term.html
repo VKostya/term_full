@@ -1,0 +1,60 @@
+{% extends "index.html" %}
+
+
+{% block title %}
+<title>Term</title>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <p> </p>
+            <a href="/terms/" class="btn btn-danger">Назад</button></a>
+            <p> </p>
+            <h1 class="display-5">Подробная информация о термине</h1>
+            <p> </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <table class="table table-striped table-hover">
+            <tbody>
+                <tr>
+                    <th scope="row">Термин</th>
+                    <td colspan="2">{{term.keyword}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Определение</th>
+                    <td colspan="2">{{term.description}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Источник</th>
+                    <td colspan="2">{{term.source}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p> </p>
+    {% if rel_flag > 0 %}
+    <h3 class="display-5">Дочерние вершины графа</h3>
+    <p> </p>
+    <div class="row">
+        {% for r in related %}
+        <div class="col-lg-4 col-md-3 col-sm-10 mr-auto">
+            {% with obj=r %}
+            {% include "components/cards.html" %}
+            {% endwith %}
+
+            {% if loop.index %3 %}
+        </div>
+        {% else %}
+    </div>
+</div><br>
+<div class="row">
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -3,6 +3,7 @@ from db.utils import get_db
 from sqlalchemy.orm import Session
 from models.link_models import TermLinkCreate, TermLinks
 from fastapi import HTTPException, Depends, APIRouter
+from api.utils import read_all_links
 
 
 link_router = APIRouter()
@@ -23,11 +24,7 @@ def create_term(term_link: TermLinkCreate, db: Session = Depends(get_db)):
 
 @link_router.get("/links/", response_model=list[TermLinks])
 def read_terms(db: Session = Depends(get_db)):
-    try:
-        term_links = db.query(TermLink).all()
-    except:
-        raise HTTPException(status_code=502, detail="DB error")    
-    return term_links
+    return read_all_links(db)
 
 
 @link_router.put("/links/{pid}/{cid}/", response_model=TermLinks)
