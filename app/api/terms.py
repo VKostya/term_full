@@ -19,10 +19,13 @@ def create_term(term: TermCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=502, detail="DB error")    
     return db_term
 
-@term_router.get("/terms/related/{id}", response_model=list[Terms])
+@term_router.get("/terms/related/{id}")
 def read_terms(id: int, db: Session = Depends(get_db)):    
     return get_related_terms(id=id, db=db)
 
+#@term_router.get("/terms/hierarchy/")
+#def read_terms(db: Session = Depends(get_db)):    
+#    return get_terms_hierarchy(db=db)
 
 @term_router.get("/terms/", response_model=list[Terms])
 def read_terms(db: Session = Depends(get_db)): 

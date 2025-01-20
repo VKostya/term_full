@@ -31,3 +31,4 @@ def get_related_terms(id, db):
     except:
         raise HTTPException(status_code=502, detail="DB error")    
     return terms
+

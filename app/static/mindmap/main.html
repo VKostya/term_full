@@ -1,0 +1,136 @@
+{% extends "index.html" %}
+
+{% block title %}
+<title>Иерархический граф</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+    .node {
+        cursor: pointer;
+    }
+
+    .node circle {
+        fill: #fff;
+        stroke: steelblue;
+        stroke-width: 3px;
+    }
+
+    .node text {
+        font: 14px sans-serif;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        /* Выравнивание текста по вертикали */
+    }
+
+    .link {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 2px;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="display-5">Глоссарий</h1>
+        </div>
+    </div>
+</div>
+
+<svg width="1400" height="700"></svg>
+<script>
+    const data = {
+        name: "Подход к оптимизации распределения данных в хранилищах",
+        id: 1,
+        children: [
+            { name: "Аллокация", id: 2 },
+            {
+                name: "Шардирование",
+                id: 3,
+                children: [
+                    { name: "Ключ шардирования", id: 4 },
+                    { name: "Горизонтальное шардирование", id: 5 },
+                    { name: "Вертикальное шардирование", id: 6 }
+                ]
+            },
+            {
+                name: "Масштабирование",
+                id: 7,
+                children: [
+                    { name: "Вертикальное масштабирование", id: 8 },
+                    {
+                        name: "Горизонтальное масштабирование",
+                        id: 9,
+                        children: [
+                            {
+                                name: "Репликация",
+                                id: 10,
+                                children: [
+                                    { name: "Синхронная репликация", id: 11 },
+                                    { name: "Асинхронная репликация", id: 12 },
+                                    { name: "Односторонняя репликация", id: 13 },
+                                    { name: "Многосторонняя репликация", id: 14 }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            { name: "Кеширование", id: 15 },
+            {
+                name: "Распределенный реестр",
+                id: 16,
+                children: [
+                    {
+                        name: "Алгоритм консенсуса",
+                        children: [
+                            { name: "PoS", id: 17 },
+                            { name: "PoW", id: 18 },
+                            { name: "DPoS", id: 19 },
+                        ]
+                    }
+                ]
+            }
+        ]
+    };
+
+    const width = 1400;
+    const height = 700;
+
+    const svg = d3.select("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    const root = d3.hierarchy(data);
+    const treeLayout = d3.tree().size([height, width - 200]);
+    treeLayout(root);
+
+    svg.selectAll(".link")
+        .data(root.links())
+        .enter()
+        .append("path")
+        .attr("class", "link")
+        .attr("d", d3.linkHorizontal().x(d => d.y).y(d => d.x));
+
+    const node = svg.selectAll(".node")
+        .data(root.descendants())
+        .enter()
+        .append("g")
+        .attr("class", "node")
+        .attr("transform", d => `translate(${d.y}, ${d.x})`)
+        .on("click", (event, d) => {
+            const name = d.data.id;  // Формирование строки URL
+            window.location.href = `${window.location.origin}/terms/${name}/`;  // Переход на новую страницу
+        });
+
+    node.append("circle")
+        .attr("r", 10);
+
+    node.append("text")
+        .attr("dy", ".35em")
+        .attr("x", d => d.children ? -12 : 12)
+        .style("text-anchor", d => d.children ? "end" : "start")
+        .text(d => d.data.name);
+</script>
+
+{% endblock %}
